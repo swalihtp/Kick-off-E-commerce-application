@@ -1,0 +1,117 @@
+:root {
+  --color-primary: #420300;   /* Sporty Red */
+  --color-secondary: #0A84FF; /* Strong Blue */
+  --color-neutral: #FFFFFF;   /* White */
+  --color-accent: #1E1E1E;    /* Charcoal Black */
+}
+
+.banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-primary));
+  color: var(--color-neutral);
+  font-family: 'Poppins', sans-serif;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin: 10px;
+}
+
+/* Left Section */
+.left h2.kickoff {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.left h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0.3rem 0;
+}
+
+.left .grand {
+  color: var(--color-neutral);
+}
+
+.left .bash {
+  color: var(--color-accent);
+  background: var(--color-neutral);
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.3rem;
+  display: inline-block;
+}
+
+.left .date {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Center Image */
+.center {
+  flex: 1;
+  text-align: center;
+}
+
+.bannerImg {
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 1rem;
+}
+
+/* Right Section */
+.right {
+  text-align: right;
+}
+
+.right .discount {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.right .everything {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.right .checkout {
+  font-size: 0.9rem;
+  margin: 0.8rem 0 1.5rem;
+  opacity: 0.85;
+}
+
+/* Buttons */
+.btnGroup {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.ctaBtn {
+  padding: 0.8rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.forHim {
+  background: var(--color-neutral);
+  color: var(--color-accent);
+}
+
+.forHer {
+  background: var(--color-accent);
+  color: var(--color-neutral);
+}
+
+.ctaBtn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}

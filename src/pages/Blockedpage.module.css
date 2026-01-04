@@ -1,0 +1,45 @@
+/* BlockedPage.module.css */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+.card {
+  background-color: #fff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+}
+
+.title {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #d9534f; /* red color for blocked status */
+}
+
+.message {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.button {
+  background-color: #0275d8;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #025aa5;
+}

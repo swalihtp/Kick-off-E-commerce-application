@@ -1,0 +1,206 @@
+/* Orders.module.css */
+
+/* General Container */
+.ordersContainer {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 80px auto 40px; /* leaves space for navbar */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ordersTitle {
+  font-size: 28px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Orders List */
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.noOrders {
+  font-size: 18px;
+  color: #777;
+  text-align: center;
+}
+
+/* Order Card */
+.orderCard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.orderCard:hover {
+  transform: translateY(-3px);
+}
+
+/* Order Header */
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.orderInfo p {
+  margin: 4px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+/* Status Badge */
+.status {
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.delivered {
+  background: #d4edda;
+  color: #155724;
+}
+
+.cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Product List */
+.orderProducts {
+  margin-top: 10px;
+}
+
+.orderProducts h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.productItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.productItem:last-child {
+  border-bottom: none;
+}
+
+.productImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+.productName {
+  font-weight: 500;
+  color: #222;
+}
+
+/* Review Section */
+.reviewSection {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.reviewSection textarea {
+  resize: none;
+  width: 100%;
+  min-height: 60px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.reviewSection button {
+  align-self: flex-start;
+  padding: 6px 16px;
+  border: none;
+  background: #0077ff;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.reviewSection button:hover {
+  background: #005fcc;
+}
+
+/* Cancel Button */
+.cancelBtn {
+  margin-top: 15px;
+  padding: 8px 18px;
+  border: none;
+  background: #ff4d4d;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.cancelBtn:hover {
+  background: #e60000;
+}
+
+/* Loading */
+.loading {
+  font-size: 18px;
+  color: #555;
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ordersContainer {
+    padding: 15px;
+  }
+
+  .orderHeader {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .productItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .productImage {
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+  }
+
+  .reviewSection textarea {
+    min-height: 50px;
+  }
+}

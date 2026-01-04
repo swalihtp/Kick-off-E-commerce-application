@@ -1,0 +1,110 @@
+.banner {
+  position: relative;
+  height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a, #1e293b); /* dark sporty */
+  color: white;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  font-family: 'Roboto', sans-serif;
+  margin: 10px;
+}
+
+.currentJersey {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 85%;
+  gap: 50px;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.currentJersey h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.currentJersey h4 {
+  font-size: 1.3rem;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #22c55e; /* green highlight */
+}
+
+.currentJersey img {
+  max-height: 300px;
+  border-radius: 12px;
+  transition: transform 0.4s ease-in-out;
+}
+
+.currentJersey img:hover {
+  transform: scale(1.07);
+}
+
+.currentJersey button {
+  background: linear-gradient(90deg, #1d4ed8, #2563eb);
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+}
+
+.currentJersey button:hover {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  transform: scale(1.05);
+}
+
+/* Navigation buttons */
+.leftBtn, .rightBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  padding: 14px 20px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  z-index: 2;
+  backdrop-filter: blur(6px);
+}
+
+.leftBtn:hover, .rightBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.leftBtn {
+  left: 25px;
+}
+
+.rightBtn {
+  right: 25px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
