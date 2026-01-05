@@ -1,5 +1,4 @@
-import { useEffect, useState, useContext } from "react";
-import styles from "./Navbar.module.css";
+import { useEffect, useState, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
@@ -7,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchCart } from "../redux/cartSlice";
 
 function Navbar() {
-  const { user, login, logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -15,163 +14,200 @@ function Navbar() {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // 🔹 Fetch products for search suggestions
-  useEffect(() => {
-    axios
-      .get(`http://localhost:5000/products`)
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.error("Failed to load products:", err));
-  }, []);
+  const dropdownRef = useRef(null);
 
-  // 🔹 Fetch cart once when Navbar loads
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
 
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  // ✅ Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <>
-      <nav className={styles.navbar}>
-        {/* Left links */}
-        <div className={styles.leftLinks}>
-          <Link className={styles.link} to="/">
+      {/* NAVBAR */}
+      <nav className="sticky top-0 z-1000 bg-black px-4 md:px-8 py-3 text-white">
+        <div className="flex items-center justify-between md:justify-evenly">
+          
+          {/* LOGO */}
+          <Link to="/" className="font-semibold text-lg">
             Kick-Off
           </Link>
-          <Link className={styles.link} to="/football">
-            Football
-          </Link>
-          <Link className={styles.link} to="/cricket">
-            Cricket
-          </Link>
-          <Link className={styles.link} to="/volleyball">
-            Volleyball
-          </Link>
-          <Link className={styles.link} to="/gym">
-            Gym
-          </Link>
+
+          {/* DESKTOP LINKS */}
+          <div className="hidden md:flex gap-6">
+            {["Football", "Cricket", "Volleyball", "Gym"].map((link) => (
+              <Link
+                key={link}
+                to={`/${link.toLowerCase()}`}
+                className="font-medium hover:text-green-500"
+              >
+                {link}
+              </Link>
+            ))}
+          </div>
+
+          {/* RIGHT ICONS */}
+          <div className="flex items-center gap-4 relative">
+            
+            {/* SEARCH */}
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="flex items-center gap-2 border border-white px-3 py-2 rounded hover:scale-110 transition"
+            >
+              <img src="/icons/icons8-search-50.png" className="h-5" />
+              <span className="hidden md:inline text-sm">SEARCH</span>
+            </button>
+
+            {/* WISHLIST */}
+            <button onClick={() => navigate("/wishlist")}>
+              <img
+                src="/icons/icons8-heart-50.png"
+                className="h-6 w-6 hover:scale-110 transition"
+              />
+            </button>
+
+            {/* CART */}
+            <button
+              onClick={() => navigate("/cart")}
+              className="relative hover:scale-110 transition"
+            >
+              <img src="/icons/icons8-cart-50.png" className="h-6 w-6" />
+              {items.length > 0 && (
+                <span className="absolute -top-2 -right-2 text-xs bg-red-600 rounded-full px-1">
+                  {items.length}
+                </span>
+              )}
+            </button>
+
+            {/* USER DROPDOWN */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen((prev) => !prev)}
+                className="hover:scale-110 transition"
+              >
+                <img
+                  src="/icons/icons8-user-50.png"
+                  className="h-7 w-7"
+                />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-3 w-44 rounded-lg bg-white text-black shadow-lg overflow-hidden z-2000">
+                  
+                  {user ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          navigate("/profile");
+                          setDropdownOpen(false);
+                        }}
+                        className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                      >
+                        My Profile
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          navigate("/orders");
+                          setDropdownOpen(false);
+                        }}
+                        className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                      >
+                        My Orders
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          logout();
+                          setDropdownOpen(false);
+                          navigate("/");
+                        }}
+                        className="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          navigate("/login");
+                          setDropdownOpen(false);
+                        }}
+                        className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                      >
+                        Login
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          navigate("/register");
+                          setDropdownOpen(false);
+                        }}
+                        className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                      >
+                        Register
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* HAMBURGER */}
+            <button
+              className="md:hidden text-2xl"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              ☰
+            </button>
+          </div>
         </div>
 
-        {/* Right icons */}
-        <div className={styles.rightIcons}>
-          {/* 🔍 Search */}
-          <div
-            className={styles.searchContainer}
-            onClick={() => setIsSearchOpen(true)}
-          >
-            <img
-              className={styles.searchIcon}
-              src="/icons/icons8-search-50.png"
-              alt="search-icon"
-            />
-            <span>SEARCH</span>
+        {/* MOBILE MENU */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 flex flex-col gap-4 bg-[#1E1E1E] p-4 rounded-lg">
+            {["Football", "Cricket", "Volleyball", "Gym"].map((link) => (
+              <Link
+                key={link}
+                to={`/${link.toLowerCase()}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-green-500"
+              >
+                {link}
+              </Link>
+            ))}
           </div>
-
-          {/* Wishlist */}
-          <div
-            className={styles.iconContainer}
-            onClick={() => navigate("/wishlist")}
-          >
-            <img
-              className={styles.icon}
-              src="/icons/icons8-heart-50.png"
-              alt="wishlist-icon"
-            />
-          </div>
-
-          {/* Cart */}
-          <div
-            className={styles.iconContainer}
-            onClick={() => navigate("/cart")}
-          >
-            <img
-              className={styles.icon}
-              src="/icons/icons8-cart-50.png"
-              alt="cart-icon"
-            />
-            {items.length > 0 && (
-              <span style={{ color: "red", marginLeft: "5px" }}>
-                {items.length}
-              </span>
-            )}
-          </div>
-
-          {/* User Dropdown */}
-          <div className={styles.userMenu}>
-            <img
-              className={styles.userIcon}
-              src="/icons/icons8-user-50.png"
-              alt="user-icon"
-              onClick={toggleDropdown}
-            />
-            {dropdownOpen && (
-              <div className={styles.dropdown}>
-                <p onClick={() => navigate("/profile")}>Profile</p>
-                {!user ? (
-                  <p
-                    onClick={() => {
-                      navigate("/login");
-                      login();
-                    }}
-                  >
-                    Login
-                  </p>
-                ) : (
-                  <p
-                    onClick={() => {
-                      navigate("/login");
-                      logout();
-                    }}
-                  >
-                    Logout
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </nav>
 
-      {/* 🔍 Search Overlay */}
+      {/* SEARCH OVERLAY */}
       {isSearchOpen && (
-        <div className={styles.searchOverlay}>
-          <div className={styles.searchBar}>
+        <div className="fixed inset-0 z-3000 bg-black/30 backdrop-blur-md">
+          <div className="fixed top-0 left-0 w-full bg-black p-4 flex justify-center items-center">
             <input
-              type="text"
-              placeholder="Search products..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
               autoFocus
-              className={styles.searchInput}
+              placeholder="Search products..."
+              className="w-full max-w-xl rounded-md px-4 py-3 text-lg"
             />
             <button
               onClick={() => setIsSearchOpen(false)}
-              className={styles.closeBtn}
+              className="ml-4 text-white text-2xl"
             >
               ✕
             </button>
-          </div>
-
-          <div className={styles.searchResults}>
-            {products
-              .filter((item) =>
-                item.name.toLowerCase().includes(searchInput.toLowerCase())
-              )
-              .map((item) => (
-                <div
-                  key={item.id}
-                  className={styles.searchItem}
-                  onClick={() => {
-                    navigate(`/product/${item.id}`);
-                    setIsSearchOpen(false);
-                  }}
-                >
-                  <p>{item.name}</p>
-                </div>
-              ))}
           </div>
         </div>
       )}
