@@ -3,11 +3,9 @@ import Navbar from "../components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchWishlist,
-  toggleWishlistLocal,
-  updateWishlistOnServer,
+  removeFromWishlist,
 } from "../redux/wishlistSlice";
-import { updateCartOnServer, setCart } from "../redux/cartSlice";
-import axios from "axios";
+import { addToCart } from "../redux/cartSlice";
 
 function Wishlist() {
   const dispatch = useDispatch();
@@ -17,47 +15,6 @@ function Wishlist() {
   useEffect(() => {
     dispatch(fetchWishlist());
   }, [dispatch]);
-
-  // 🛒 Add to Cart
-  const addToCart = async (product) => {
-    const res = await axios.get(
-      `http://localhost:5000/users?email=${userEmail}`
-    );
-    const user = res.data[0];
-    if (!user) return;
-
-    const cart = user.cart || [];
-    const existing = cart.find((i) => i.productId === product.id);
-
-    const updatedCart = existing
-      ? cart.map((i) =>
-          i.productId === product.id ? { ...i, qty: i.qty + 1 } : i
-        )
-      : [
-          ...cart,
-          {
-            productId: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.image,
-            qty: 1,
-          },
-        ];
-
-    dispatch(setCart(updatedCart));
-    dispatch(updateCartOnServer(updatedCart));
-  };
-
-  // ❤️ Wishlist toggle
-  const toggleWishlist = (product) => {
-    dispatch(toggleWishlistLocal(product));
-
-    const updatedWishlist = items.some((i) => i.id === product.id)
-      ? items.filter((i) => i.id !== product.id)
-      : [...items, product];
-
-    dispatch(updateWishlistOnServer(updatedWishlist));
-  };
 
   return (
     <>
@@ -92,8 +49,8 @@ function Wishlist() {
                 {/* Image */}
                 <div className="h-56 bg-gray-100 flex items-center justify-center">
                   <img
-                    src={item.image}
-                    alt={item.name}
+                    src={item.product_image}
+                    alt={item.product_name}
                     className="h-full w-full object-contain"
                   />
                 </div>
@@ -101,38 +58,23 @@ function Wishlist() {
                 {/* Info */}
                 <div className="flex flex-1 flex-col p-4">
                   <h3 className="text-base font-semibold text-gray-900">
-                    {item.name}
+                    {item.product_name}
                   </h3>
                   <p className="mt-1 font-bold text-[#1E1E1E]">
-                    ₹{item.price}
+                    ₹{item.product_price}
                   </p>
 
                   {/* Actions */}
                   <div className="mt-4 flex items-center gap-3">
                     <button
-                      onClick={() => addToCart(item)}
+                      onClick={() =>dispatch(addToCart(item.product))}
                       className="flex-1 rounded-md bg-[#420300] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#5a0500]"
                     >
                       Add to Cart
                     </button>
 
-                    <button
-                      onClick={() => toggleWishlist(item)}
-                      className={`flex h-10 w-10 items-center justify-center rounded-full border transition hover:scale-105 ${
-                        items.some((w) => w.id === item.id)
-                          ? "border-[#420300]"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      <img
-                        src={
-                          items.some((w) => w.id === item.id)
-                            ? "/icons/icons8-heart-50-filled.png"
-                            : "/icons/icons8-heart-50 (5).png"
-                        }
-                        alt="wishlist"
-                        className="h-5 w-5"
-                      />
+                    <button className="flex h-10 w-10 items-center justify-center  transition hover:scale-105" onClick={()=>dispatch(removeFromWishlist(item.product))}>
+                      <img src="icons/icons8-heart-50 (9).png" alt="" />
                     </button>
                   </div>
                 </div>

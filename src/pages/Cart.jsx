@@ -1,148 +1,111 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
-import {
-  fetchCart,
-  setCart,
-  updateCartOnServer,
-} from "../redux/cartSlice";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import Navbar from '../components/Navbar'
+import { fetchCart, removeCartItem, updateCartItemQty } from '../redux/cartSlice'
+import { useNavigate } from 'react-router-dom'
 
-function Cart() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+function Cart () {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const { items, status, error } = useSelector((state) => state.cart);
-  const [total, setTotal] = useState(0);
+  const { items, total_price, status, error } = useSelector(state => state.cart)
 
-  // Load cart on mount
   useEffect(() => {
-    dispatch(fetchCart());
-  }, [dispatch]);
+    dispatch(fetchCart())
+  }, [dispatch])
 
-  // Calculate total
-  useEffect(() => {
-    const totalValue = items.reduce(
-      (sum, item) => sum + item.price * item.qty,
-      0
-    );
-    setTotal(totalValue);
-  }, [items]);
+  const increaseQty = item => {
+    dispatch(
+      updateCartItemQty({
+        itemId: item.id,
+        quantity: item.quantity + 1
+      })
+    )
+  }
 
-  // Update cart (Redux + Server)
-  const updateCart = (updatedCart) => {
-    dispatch(setCart(updatedCart));
-    dispatch(updateCartOnServer(updatedCart));
-  };
-
-  const increaseQty = (product) => {
-    if (product.qty < 5) {
-      updateCart(
-        items.map((item) =>
-          item.productId === product.productId
-            ? { ...item, qty: item.qty + 1 }
-            : item
-        )
-      );
-    }
-  };
-
-  const decreaseQty = (product) => {
-    if (product.qty > 1) {
-      updateCart(
-        items.map((item) =>
-          item.productId === product.productId
-            ? { ...item, qty: item.qty - 1 }
-            : item
-        )
-      );
-    }
-  };
-
-  const removeCartItem = (product) => {
-    updateCart(
-      items.filter(
-        (item) => item.productId !== product.productId
+  const decreaseQty = item => {
+    if (item.quantity > 1) {
+      dispatch(
+        updateCartItemQty({
+          itemId: item.id,
+          quantity: item.quantity - 1
+        })
       )
-    );
-  };
+    }
+  }
 
+  const removeItem = item => {
+    dispatch(removeCartItem(item.id))
+  }
   return (
     <>
       <Navbar />
 
-      <div className="mx-auto my-10 max-w-[900px] rounded-xl bg-white p-5 shadow-[0_4px_15px_rgba(0,0,0,0.1)]">
-        
+      <div className='mx-auto my-10 max-w-225 rounded-xl bg-white p-5 shadow-[0_4px_15px_rgba(0,0,0,0.1)]'>
         {/* Title */}
-        <h2 className="mb-5 text-center text-[1.8rem] font-bold text-[#333]">
+        <h2 className='mb-5 text-center text-[1.8rem] font-bold text-[#333]'>
           Your Shopping Cart
         </h2>
 
         {/* Status */}
-        {status === "loading" && (
-          <p className="text-center text-gray-600">
-            Loading your cart...
-          </p>
+        {status === 'loading' && (
+          <p className='text-center text-gray-600'>Loading your cart...</p>
         )}
 
-        {status === "failed" && (
-          <p className="text-center text-red-600">
-            {error}
-          </p>
+        {status === 'failed' && (
+          <p className='text-center text-red-600'>{error}</p>
         )}
 
         {/* Empty Cart */}
-        {items.length === 0 && status === "succeeded" ? (
-          <p className="my-8 text-center text-[1.2rem] text-[#777]">
+        {items.length === 0 && status === 'succeeded' ? (
+          <p className='my-8 text-center text-[1.2rem] text-[#777]'>
             Your cart is empty
           </p>
         ) : (
           <>
             {/* Cart Items */}
-            {items.map((item) => (
+            {items.map(item => (
               <div
-                key={item.productId}
-                className="flex flex-wrap items-center gap-5 border-b border-[#eee] py-4 md:flex-nowrap"
+                key={item.id}
+                className='flex flex-wrap items-center gap-5 border-b border-[#eee] py-4 md:flex-nowrap'
               >
                 {/* Image */}
                 <img
-                  src={item.image}
-                  alt={item.name}
-                  className="h-[120px] w-full rounded-lg border border-[#ddd] bg-[#f9f9f9] object-contain md:w-[120px]"
+                  src={item.product_image}
+                  alt={item.product_name}
+                  className='h-30 w-full rounded-lg border border-[#ddd] bg-[#f9f9f9] object-contain md:w-30'
                 />
 
                 {/* Details */}
-                <div className="flex flex-1 flex-col gap-2.5">
-                  
+                <div className='flex flex-1 flex-col gap-2.5'>
                   {/* Name & Price */}
-                  <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
-                    <p className="text-[1.1rem] font-semibold text-[#222]">
-                      {item.name}
+                  <div className='flex flex-col gap-1 md:flex-row md:items-center md:justify-between'>
+                    <p className='text-[1.1rem] font-semibold text-[#222]'>
+                      {item.product_name}
                     </p>
-                    <p className="text-[1rem] font-bold text-[#28a745]">
-                      ₹{item.price}
+                    <p className='text-[1rem] font-bold text-[#28a745]'>
+                      ₹{item.product_price}
                     </p>
                   </div>
 
                   {/* Quantity & Remove */}
-                  <div className="flex items-center justify-between gap-3">
-                    
+                  <div className='flex items-center justify-between gap-3'>
                     {/* Quantity Controls */}
-                    <div className="flex items-center gap-2">
+                    <div className='flex items-center gap-2'>
                       <button
                         onClick={() => increaseQty(item)}
-                        className="flex h-7 w-7 items-center justify-center rounded-md border-2 border-white bg-black text-[1.1rem] text-white transition hover:border-black"
+                        className='flex h-7 w-7 items-center justify-center rounded-md border-2 border-white bg-black text-[1.1rem] text-white transition hover:border-black'
                       >
                         +
                       </button>
 
-                      <span className="w-6 text-center text-[1rem] font-semibold text-[#333]">
-                        {item.qty}
+                      <span className='w-6 text-center text-[1rem] font-semibold text-[#333]'>
+                        {item.quantity}
                       </span>
 
                       <button
                         onClick={() => decreaseQty(item)}
-                        className="flex h-7 w-7 items-center justify-center rounded-md border-2 border-white bg-black text-[1.1rem] text-white transition hover:border-black"
+                        className='flex h-7 w-7 items-center justify-center rounded-md border-2 border-white bg-black text-[1.1rem] text-white transition hover:border-black'
                       >
                         -
                       </button>
@@ -150,8 +113,8 @@ function Cart() {
 
                     {/* Remove */}
                     <button
-                      onClick={() => removeCartItem(item)}
-                      className="rounded-md bg-black px-2.5 py-1.5 text-white transition hover:border-2 hover:border-black hover:bg-white hover:text-black"
+                      onClick={() => removeItem(item)}
+                      className='rounded-md bg-black px-2.5 py-1.5 text-white transition hover:border-2 hover:border-black hover:bg-white hover:text-black'
                     >
                       Remove Item
                     </button>
@@ -161,29 +124,29 @@ function Cart() {
             ))}
 
             {/* Summary */}
-            <div className="mt-8 rounded-lg bg-[#f7f7f7] p-5 text-[1rem] text-[#444]">
-              <h3 className="mb-4 text-[1.4rem] font-semibold text-[#111]">
+            <div className='mt-8 rounded-lg bg-[#f7f7f7] p-5 text-[1rem] text-[#444]'>
+              <h3 className='mb-4 text-[1.4rem] font-semibold text-[#111]'>
                 PRICE DETAILS
               </h3>
 
-              <p className="my-2 flex justify-between">
+              <p className='my-2 flex justify-between'>
                 <span>Total Products</span>
                 <span>{items.length}</span>
               </p>
 
-              <p className="my-2 flex justify-between">
+              <p className='my-2 flex justify-between'>
                 <span>Discount</span>
                 <span>₹0</span>
               </p>
 
-              <p className="my-2 flex justify-between text-[1.2rem] font-bold text-[#28a745]">
+              <p className='my-2 flex justify-between text-[1.2rem] font-bold text-[#28a745]'>
                 <span>Total Amount</span>
-                <span>₹{total}</span>
+                <span>₹{total_price}</span>
               </p>
 
               <button
-                onClick={() => navigate("/checkout")}
-                className="mt-5 w-full rounded-lg bg-black p-3 text-[1rem] font-semibold text-white transition hover:border-2 hover:border-black hover:bg-white hover:text-black"
+                onClick={() => navigate('/checkout')}
+                className='mt-5 w-full rounded-lg bg-black p-3 text-[1rem] font-semibold text-white transition hover:border-2 hover:border-black hover:bg-white hover:text-black'
               >
                 Proceed to Checkout
               </button>
@@ -192,7 +155,7 @@ function Cart() {
         )}
       </div>
     </>
-  );
+  )
 }
 
-export default Cart;
+export default Cart

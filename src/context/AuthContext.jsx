@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import api from "../api/axios";
 
 export const AuthContext = createContext();
 
@@ -40,9 +41,11 @@ function AuthContextProvider({ children }) {
   };
 
   const logout = () => {
+    api.post(`http://127.0.0.1:8000/api/accounts/logout/`,{refresh:localStorage.getItem('refresh')})
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("userEmail");
+
   };
 
   return (
