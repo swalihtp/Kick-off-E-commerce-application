@@ -1,136 +1,188 @@
-import React, { useState } from "react";
-import axios from "axios";
-import Header from "./Header";
-import styles from "./AddProduct.module.css";
-import Sidebar from "./Sidebar.jsx";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import {useNavigate} from 'react-router-dom'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import api from '../api/axios'
+import DashboardHeader from './admin/DashboardHeader'
+import DashboardSidebar from './admin/DashboardSidebar'
+import { useEffect } from 'react'
 
-function AddProduct() {
-  const navigate=useNavigate()
+function AddProduct () {
+  const navigate = useNavigate()
+
+  const [categories, setCategories] = useState([])
   const [formData, setFormData] = useState({
-    name: "",
-    price: "",
-    category: "",
-    description: "",
-    image: "",
-  });
+    name: '',
+    price: '',
+    category: '',
+    description: '',
+    image: null,
+    stock: ''
+  })
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post("http://localhost:5000/products", formData);
-      toastMessage()
-      setFormData({
-        name: "",
-        price: "",
-        category: "",
-        description: "",
-        image: "",
-      });
-      navigate('/admin/allproducts')
-      
-    } catch (err) {
-      console.error("Error adding product:", err);
-      alert("❌ Something went wrong!");
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await api.get('admin/categories/')
+        setCategories(res.data)
+      } catch (error) {
+        console.error('Error fetching categories', error)
+      }
     }
-  };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    fetchCategories()
+  }, [])
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64Image = reader.result;
-      setFormData(prev=>({...prev,image:base64Image}))
-    };
-    reader.readAsDataURL(file);
-  };
+  const handleChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
 
-const toastMessage = () => {
-    toast.success("Product Added successfully", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
-  };
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    const data = new FormData()
+    data.append('name', formData.name)
+    data.append('price', formData.price)
+    data.append('category', formData.category)
+    data.append('description', formData.description)
+    data.append('image', formData.image)
+
+    try {
+      await api.post('products/products/', data)
+      toast.success('Product added successfully')
+      navigate('/admin/products')
+    } catch (err) {
+      console.error(err.response?.data)
+      toast.error('Something went wrong')
+    }
+  }
+
   return (
-    <>
-      <Header />
+    <div className='min-h-screen bg-gray-100'>
+      {/* Header */}
+      <DashboardHeader />
 
-      <div className={styles.sidebarContainer}>
-        <Sidebar />
+      <div className='flex'>
+        {/* Sidebar */}
+        <DashboardSidebar />
 
-        <div className={styles.container}>
-          <h1 className={styles.title}>Add New Product</h1>
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.formGroup}>
-              <label>Product Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
+        {/* Main Content */}
+        <main className='flex-1 p-6'>
+          <div className='max-w-3xl mx-auto bg-white rounded-xl shadow-sm p-8'>
+            <h1 className='text-xl font-semibold text-gray-800 mb-6'>
+              Add New Product
+            </h1>
 
-            <div className={styles.formGroup}>
-              <label>Price ($)</label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <form onSubmit={handleSubmit} className='space-y-5'>
+              {/* Product Name */}
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Product Name
+                </label>
+                <input
+                  type='text'
+                  name='name'
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className='w-full rounded-lg border border-gray-300
+                             px-4 py-2 text-gray-800
+                             focus:outline-none focus:ring-2 focus:ring-black'
+                />
+              </div>
 
-            <div className={styles.formGroup}>
-              <label>Category</label>
-              <input
-                type="text"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                required
-              />
-            </div>
+              {/* Price */}
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Price
+                </label>
+                <input
+                  type='number'
+                  name='price'
+                  value={formData.price}
+                  onChange={handleChange}
+                  required
+                  className='w-full rounded-lg border border-gray-300
+                             px-4 py-2 text-gray-800
+                             focus:outline-none focus:ring-2 focus:ring-black'
+                />
+              </div>
 
-            <div className={styles.formGroup}>
-              <label>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows="4"
-              ></textarea>
-            </div>
+              {/* Category */}
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Category
+                </label>
 
-            <div className={styles.formGroup}>
-              <label>Image URL</label>
-              <input type="file" onChange={handleImageChange} />
-            </div>
+                <select
+                  name='category'
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                  className='w-full rounded-lg border border-gray-300 px-4 py-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none'
+                >
+                  <option value=''>Select Category</option>
 
-            <button type="submit" className={styles.submitBtn}>
-              Add Product
-            </button>
-          </form>
-        </div>
+                  {categories.map(cat => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Description
+                </label>
+                <textarea
+                  name='description'
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows='4'
+                  className='w-full rounded-lg border border-gray-300
+                             px-4 py-2 text-gray-800
+                             focus:outline-none focus:ring-2 focus:ring-black'
+                />
+              </div>
+
+              {/* Image */}
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Product Image
+                </label>
+                <input
+                  type='file'
+                  accept='image/*'
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      image: e.target.files[0]
+                    })
+                  }
+                  className='w-full text-sm text-gray-600
+                             file:mr-4 file:py-2 file:px-4
+                             file:rounded-lg file:border-0
+                             file:bg-black file:text-white
+                             hover:file:bg-gray-800'
+                />
+              </div>
+
+              {/* Submit */}
+              <button
+                type='submit'
+                className='w-full bg-black text-white py-2.5
+                           rounded-lg font-medium
+                           hover:bg-gray-800 transition'
+              >
+                Add Product
+              </button>
+            </form>
+          </div>
+        </main>
       </div>
-    </>
-  );
+    </div>
+  )
 }
 
-export default AddProduct;
+export default AddProduct

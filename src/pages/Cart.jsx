@@ -1,20 +1,39 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Navbar from '../components/Navbar'
-import { fetchCart, removeCartItem, updateCartItemQty } from '../redux/cartSlice'
+import {
+  fetchCart,
+  removeCartItem,
+  updateCartItemQty
+} from '../redux/cartSlice'
 import { useNavigate } from 'react-router-dom'
+import { fetchProducts } from '../redux/productSlice'
 
 function Cart () {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const { items, total_price, status, error } = useSelector(state => state.cart)
+  const { items: products } = useSelector(state => state.products)
 
   useEffect(() => {
     dispatch(fetchCart())
+    dispatch(fetchProducts())
   }, [dispatch])
 
   const increaseQty = item => {
+    if(item.quantity>=5){
+      return
+    }
+    const product = products.find(p => p.id === item.product)
+
+    if (!product) return
+
+    if (item.quantity >= product.stock) {
+      alert(`Only ${product.stock} stock available`)
+      return
+    }
+
     dispatch(
       updateCartItemQty({
         itemId: item.id,

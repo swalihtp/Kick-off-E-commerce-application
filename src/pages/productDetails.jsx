@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchCart, addToCart } from '../redux/cartSlice'
-
+import ReviewsSection from '../components/ReviewsSection'
+import { useNavigate } from 'react-router-dom'
 import {
   fetchWishlist,
   addToWishlist,
@@ -18,15 +19,14 @@ function ProductDetails () {
   const { items: wishlistItems } = useSelector(state => state.wishlist)
   const dispatch = useDispatch()
   const { items: cartItems } = useSelector(state => state.cart)
+  const navigate=useNavigate()
 
 
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await api.get(
-          `http://127.0.0.1:8000/api/products/products/${id}/`
-        )
+        const res = await api.get(`http://127.0.0.1:8000/api/products/products/${id}/`)
         setProduct(res.data)
       } catch (error) {
         console.error(error)
@@ -71,7 +71,7 @@ function ProductDetails () {
               <img
                 src={product.image}
                 alt={product.name}
-                className='w-full max-h-[450px] object-contain rounded-xl'
+                className='w-full max-h-112.5 object-contain rounded-xl'
               />
             </div>
 
@@ -180,7 +180,10 @@ function ProductDetails () {
             </div>
           </div>
         </div>
+        <ReviewsSection productId={product.id} />
       </div>
+    
+
     </>
   )
 }

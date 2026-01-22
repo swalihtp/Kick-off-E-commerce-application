@@ -1,175 +1,120 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import styles from "./Users.module.css";
+import React, { useState, useEffect } from 'react'
+import DashboardHeader from '../components/admin/DashboardHeader'
+import DashboardSidebar from '../components/admin/DashboardSidebar'
+import api from '../api/axios'
+import { useNavigate } from 'react-router-dom'
 
-function Users() {
-  const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState(null);
-  const [orders, setOrders] = useState([]);
+function Users () {
+  const [users, setUsers] = useState([])
+  const [refresh, setRefresh] = useState(false)
+  const navigate=useNavigate()
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers()
+  }, [refresh])
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/users");
-      setUsers(res.data);
+      const res = await api.get('admin/users/')
+      console.log(res.data);
+      
+      setUsers(res.data)
     } catch (err) {
-      console.error("Error fetching users:", err);
+      console.error('Error fetching users:', err)
     }
-  };
-
-  const updateStatus = async (userId, newStatus) => {
+  }
+  const toggleUserStatus = async (e,userId, status) => {
+    e.stopPropagation()
     try {
-      await axios.patch(`http://localhost:5000/users/${userId}`, {
-        status: newStatus,
-      });
-
-      setUsers(
-        users.map((user) =>
-          user.id === userId ? { ...user, status: newStatus } : user
-        )
-      );
-
-      const currentUser = JSON.parse(localStorage.getItem("user"));
-      if (currentUser?.id === userId) {
-        const updatedUser = { ...currentUser, status: newStatus };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-      }
+      await api.patch(`admin/users/`, { id: userId, status: status })
+      setRefresh(prev => !prev)
+      alert('user status updated')
     } catch (err) {
-      console.error("Error updating user status:", err);
+      alert('something gone wrong')
+      console.error(err)
     }
-  };
+  }
 
-  const clickUser = async (user) => {
-    setSelectedUserId(selectedUserId === user.id ? null : user.id);
-
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/orders?userId=${user.id}`
-      );
-
-      const allProducts = res.data.flatMap((order) => order.products);
-
-      setOrders(allProducts);
-    } catch (err) {
-      console.error("Error fetching orders:", err);
-      setOrders([]);
-    }
-  };
 
   return (
-    <div className={styles.dashboardLayout}>
-      <Header />
+    <div className='min-h-screen bg-gray-100 flex flex-col'>
+      <DashboardHeader />
 
-      <div className={styles.body}>
-        <Sidebar />
+      <div className='flex flex-1'>
+        <DashboardSidebar />
 
-        <main className={styles.mainContent}>
-          <h2>Users List</h2>
-          <div className={styles.usersList}>
-            {users.map((user) => {
-              const status = user.status || "active";
-              return (
-                <div
-                  key={user.id}
-                  className={styles.userCard}
-                  onClick={() => clickUser(user)}
-                >
-                  <div className={styles.userInfoRow}>
-                    <strong>Name:</strong> {user.name}
-                  </div>
-                  <div className={styles.userInfoRow}>
-                    <strong>Email:</strong> {user.email}
-                  </div>
-                  <div className={styles.userInfoRow}>
-                    <strong>Status:</strong> {status}
+        {/* Main Content */}
+        <main className='flex-1 p-6'>
+          <h2 className='text-xl font-semibold text-gray-800 mb-6'>
+            Users Management
+          </h2>
+
+          {/* Users List */}
+          <div className='space-y-4'>
+            {users.map(user => (
+              <div
+                key={user.id}
+                onClick={()=>navigate(`/admin/userdetails/${user.id}/`)}
+                className='bg-white rounded-xl shadow-sm
+                 hover:shadow-md transition
+                 p-6 flex items-center justify-between cursor-pointer'
+              >
+                {/* Left Side */}
+                <div className='flex items-center gap-5'>
+                  {/* Avatar */}
+                  <div className='w-14 h-14 rounded-full overflow-hidden border'>
+                    <img
+                      src={user.profile_image || '/avatar.png'}
+                      alt={user.first_name}
+                      className='w-full h-full object-cover'
+                    />
                   </div>
 
-                  <div className={styles.buttonGroup}>
+                  {/* User Info */}
+                  <div>
+                    <p className='font-semibold text-gray-800 text-lg'>
+                      {user.first_name} {user.last_name}
+                    </p>
+                    <p className='text-sm text-gray-500'>{user.email}</p>
+                  </div>
+                </div>
+
+                {/* Right Side Actions */}
+                <div className='flex gap-3'>
+                  {user.is_active ? (
                     <button
-                      className={styles.blockBtn}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateStatus(user.id, "blocked");
-                      }}
-                      disabled={status === "blocked"}
+                      onClick={(e) => toggleUserStatus(e,user.id, false)}
+                      className='px-4 py-2 text-sm rounded-lg
+                 bg-white text-black border-2
+                 hover:bg-gray-100 transition'
                     >
                       Block
                     </button>
+                  ) : (
                     <button
-                      className={styles.activateBtn}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateStatus(user.id, "active");
-                      }}
-                      disabled={status === "active"}
+                      onClick={(e) => toggleUserStatus(e,user.id, true)}
+                      className='px-4 py-2 text-sm rounded-lg
+                 bg-black text-white
+                 hover:bg-gray-800 transition'
                     >
                       Activate
                     </button>
-                  </div>
-
-                  {selectedUserId === user.id && (
-                    <div className={styles.userContainer}>
-                      <div className={styles.userHeader}>
-                        <img src={user.image} alt={user.name} />
-                        <div className={styles.userInfo}>
-                          <p>
-                            <b>ID:</b> {user.id}
-                          </p>
-                          <p>
-                            <b>Name:</b> {user.name}
-                          </p>
-                          <p>
-                            <b>Email:</b> {user.email}
-                          </p>
-                          <p className={styles.userStatus}>{status}</p>
-                        </div>
-                      </div>
-
-                      {user.cart?.length > 0 && (
-                        <div className={styles.cartContainer}>
-                          <h3 className={styles.cartTitle}>Cart Items</h3>
-                          {user.cart.map((item, index) => (
-                            <div className={styles.cartItem} key={index}>
-                              <img src={item.image} alt={item.name} />
-                              <p>{item.name}</p>
-                              <p>₹{item.price}</p>
-                              <p>Qty: {item.qty}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {orders.length > 0 && (
-                        <div className={styles.ordersContainer}>
-                          <h3>Orders</h3>
-                          {orders.map((item, index) => (
-                            <div key={index} className={styles.orderItem}>
-                              <img
-                                src={item.productImage}
-                                alt={item.productName}
-                              />
-                              <p>{item.productName}</p>
-                              <p>₹{item.price}</p>
-                              <p>Qty: {item.quantity}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
                   )}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
+
+          {/* Empty State */}
+          {users.length === 0 && (
+            <div className='text-center text-gray-500 mt-12'>
+              No users found
+            </div>
+          )}
         </main>
       </div>
     </div>
-  );
+  )
 }
 
-export default Users;
+export default Users

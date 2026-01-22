@@ -41,7 +41,7 @@ function AuthContextProvider({ children }) {
   };
 
   const logout = () => {
-    api.post(`http://127.0.0.1:8000/api/accounts/logout/`,{refresh:localStorage.getItem('refresh')})
+    api.post(`accounts/logout/`,{refresh:localStorage.getItem('refresh')})
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("userEmail");

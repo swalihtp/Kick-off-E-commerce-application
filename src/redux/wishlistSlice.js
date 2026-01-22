@@ -8,7 +8,7 @@ const userEmail = localStorage.getItem('userEmail')
 export const fetchWishlist = createAsyncThunk(
   'wishlist/fetchWishlist',
   async () => {
-    const res = await api.get(`http://127.0.0.1:8000/api/wishlist/`)
+    const res = await api.get(`wishlist/`)
     return res.data
   }
 )
@@ -18,7 +18,7 @@ export const addToWishlist = createAsyncThunk(
   async (product, { rejectWithValue }) => {
     
     try {
-      const res = await api.post('http://127.0.0.1:8000/api/wishlist/', {
+      const res = await api.post('wishlist/', {
         product: product.id
       })
       return res.data
@@ -34,7 +34,7 @@ export const removeFromWishlist=createAsyncThunk(
     console.log('called remove');
     
     try{
-      const res = await api.delete(`http://127.0.0.1:8000/api/wishlist/${id}/delete/`)
+      const res = await api.delete(`wishlist/${id}/delete/`)
       return res.data
     }catch(err){
       return rejectWithValue

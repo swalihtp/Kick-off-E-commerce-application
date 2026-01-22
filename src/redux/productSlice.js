@@ -4,7 +4,7 @@ import api from '../api/axios'
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async () => {
-    const response = await api.get('http://127.0.0.1:8000/api/products/products/')
+    const response = await api.get('products/products/')
     const data = await response.data
     return data
   }
