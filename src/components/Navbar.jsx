@@ -69,6 +69,8 @@ function Navbar () {
     p.name.toLowerCase().includes(searchInput.toLowerCase())
   )
 
+  console.log(items);
+  
   return (
     <>
       {/* NAVBAR */}
