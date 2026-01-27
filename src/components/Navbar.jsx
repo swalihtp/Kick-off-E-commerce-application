@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import { AuthContext } from '../context/AuthContext'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchCart } from '../redux/cartSlice'
