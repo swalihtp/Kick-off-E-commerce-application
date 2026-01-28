@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "http://kickoffecommerse.duckdns.org/api/:path*"
-    }
-  ]
-}
