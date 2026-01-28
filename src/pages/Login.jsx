@@ -50,7 +50,7 @@ function Login () {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-100 px-4'>
+    <div className='min-h-screen flex items-center justify-center bg-red-600 px-4'>
       <form
         onSubmit={handleSubmit}
         className='w-full max-w-md rounded-xl bg-white p-8 shadow-xl'
