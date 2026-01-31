@@ -46,7 +46,8 @@ function RegistrationForm () {
     setLoading(true)
 
     try {
-      await api.post('accounts/register/', form)
+      const res=await api.post('accounts/register/', form)
+      alert(res.data.message)
       navigate('/login')
     } catch (err) {
       console.error(err)
