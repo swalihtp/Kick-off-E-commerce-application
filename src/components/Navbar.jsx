@@ -4,6 +4,14 @@ import { AuthContext } from '../context/AuthContext'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchCart } from '../redux/cartSlice'
 import { fetchProducts } from '../redux/productSlice'
+import {
+  FiSearch,
+  FiHeart,
+  FiShoppingCart,
+  FiUser,
+  FiLogOut,
+  FiPackage
+} from 'react-icons/fi'
 
 function Navbar () {
   const { user, logout } = useContext(AuthContext)
@@ -42,7 +50,11 @@ function Navbar () {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false)
       }
-      if (searchRef.current && !searchRef.current.contains(e.target) && isSearchOpen) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(e.target) &&
+        isSearchOpen
+      ) {
         setIsSearchOpen(false)
         setSearchInput('')
       }
@@ -54,7 +66,7 @@ function Navbar () {
 
   // Close search on escape key
   useEffect(() => {
-    const handleEscape = (e) => {
+    const handleEscape = e => {
       if (e.key === 'Escape') {
         setIsSearchOpen(false)
         setSearchInput('')
@@ -68,21 +80,20 @@ function Navbar () {
     p.name.toLowerCase().includes(searchInput.toLowerCase())
   )
 
-  console.log(items);
-  
+  console.log(items)
+
   return (
     <>
       {/* NAVBAR */}
-      <nav className={`fixed top-0 w-full z-1000 bg-black transition-all duration-300 ${
-        scrolled ? 'py-2 shadow-2xl' : 'py-3'
-      }`}>
+      <nav
+        className={`fixed top-0 w-full z-1000 bg-black transition-all duration-300 ${
+          scrolled ? 'py-2 shadow-2xl' : 'py-3'
+        }`}
+      >
         <div className='container mx-auto px-4 md:px-6 lg:px-8'>
           <div className='flex items-center justify-between'>
             {/* LOGO - LEFT */}
-            <Link 
-              to='/' 
-              className='flex items-center gap-2 group'
-            >
+            <Link to='/' className='flex items-center gap-2 group'>
               <div className='h-10 w-10 rounded-full bg-linear-to-r from-green-500 to-emerald-600 flex items-center justify-center'>
                 <span className='font-bold text-white text-lg'>K</span>
               </div>
@@ -121,24 +132,16 @@ function Navbar () {
                 className='p-2 rounded-full hover:bg-gray-800 transition-all duration-200 group relative'
                 aria-label='Search'
               >
-                <img 
-                  src='/icons/icons8-search-50.png' 
-                  className='h-5 w-5 filter brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity' 
-                  alt='Search'
-                />
+                <FiSearch className='h-5 w-5 text-white opacity-80 group-hover:opacity-100' />
               </button>
 
               {/* WISHLIST */}
-              <button 
+              <button
                 onClick={() => navigate('/wishlist')}
                 className='p-2 rounded-full hover:bg-gray-800 transition-all duration-200 group relative'
                 aria-label='Wishlist'
               >
-                <img
-                  src='/icons/icons8-heart-50.png'
-                  className='h-6 w-6 filter brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity'
-                  alt='Wishlist'
-                />
+                <FiHeart className='h-6 w-6 text-white opacity-80 group-hover:opacity-100' />
               </button>
 
               {/* CART WITH BADGE */}
@@ -147,11 +150,8 @@ function Navbar () {
                 className='p-2 rounded-full hover:bg-gray-800 transition-all duration-200 group relative'
                 aria-label='Cart'
               >
-                <img 
-                  src='/icons/icons8-cart-50.png' 
-                  className='h-6 w-6 filter brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity' 
-                  alt='Cart'
-                />
+                <FiShoppingCart className='h-6 w-6 text-white opacity-80 group-hover:opacity-100' />
+
                 {items.length > 0 && (
                   <span className='absolute -top-1 -right-1 bg-linear-to-r from-red-600 to-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-bounce'>
                     {items.length > 9 ? '9+' : items.length}
@@ -167,11 +167,7 @@ function Navbar () {
                   aria-label='User menu'
                 >
                   <div className='h-8 w-8 rounded-full bg-linear-to-r from-gray-700 to-gray-900 flex items-center justify-center border border-gray-600 group-hover:border-green-500 transition-colors'>
-                    <img 
-                      src='/icons/icons8-user-50.png' 
-                      className='h-4 w-4 filter brightness-0 invert opacity-80 group-hover:opacity-100' 
-                      alt='User'
-                    />
+                    <FiUser className='h-4 w-4 text-white opacity-80 group-hover:opacity-100' />
                   </div>
                   <span className='hidden md:inline text-sm text-gray-300 group-hover:text-white'>
                     {user ? 'Account' : 'Login'}
@@ -190,15 +186,19 @@ function Navbar () {
                             </span>
                           </div>
                           <div>
-                            <p className='font-semibold text-white'>{user.name || 'User'}</p>
-                            <p className='text-xs text-gray-400'>{user.email}</p>
+                            <p className='font-semibold text-white'>
+                              {user.name || 'User'}
+                            </p>
+                            <p className='text-xs text-gray-400'>
+                              {user.email}
+                            </p>
                           </div>
                         </div>
                       ) : (
                         <p className='text-white font-medium'>Welcome Guest</p>
                       )}
                     </div>
-                    
+
                     <div className='py-2'>
                       {user ? (
                         <>
@@ -209,11 +209,8 @@ function Navbar () {
                             }}
                             className='flex items-center gap-3 w-full px-4 py-3 text-left text-gray-300 hover:text-white hover:bg-gray-800 transition-colors'
                           >
-                            <img 
-                              src='/icons/icons8-user-50.png' 
-                              className='h-4 w-4 filter brightness-0 invert opacity-70' 
-                              alt='Profile'
-                            />
+                            <FiUser className='h-4 w-4 text-white opacity-80 group-hover:opacity-100' />
+
                             <span>My Profile</span>
                           </button>
                           <button
@@ -223,11 +220,7 @@ function Navbar () {
                             }}
                             className='flex items-center gap-3 w-full px-4 py-3 text-left text-gray-300 hover:text-white hover:bg-gray-800 transition-colors'
                           >
-                            <img 
-                              src='/icons/icons8-purchase-order-50.png' 
-                              className='h-4 w-4 filter brightness-0 invert opacity-70' 
-                              alt='Orders'
-                            />
+                            <FiPackage className='h-4 w-4 text-white opacity-80 group-hover:opacity-100' />
                             <span>My Orders</span>
                           </button>
                           <button
@@ -238,11 +231,8 @@ function Navbar () {
                             }}
                             className='flex items-center gap-3 w-full px-4 py-3 text-left text-red-400 hover:text-red-300 hover:bg-gray-800 transition-colors border-t border-gray-800 mt-2'
                           >
-                            <img 
-                              src='/icons/icons8-logout-50.png' 
-                              className='h-4 w-4 filter brightness-0 invert opacity-70' 
-                              alt='Logout'
-                            />
+                            <FiLogOut className='h-4 w-4 text-white opacity-80' />
+
                             <span>Logout</span>
                           </button>
                         </>
@@ -255,9 +245,9 @@ function Navbar () {
                             }}
                             className='flex items-center gap-3 w-full px-4 py-3 text-left text-gray-300 hover:text-white hover:bg-gray-800 transition-colors'
                           >
-                            <img 
-                              src='/icons/icons8-login-50.png' 
-                              className='h-4 w-4 filter brightness-0 invert opacity-70' 
+                            <img
+                              src='/icons/icons8-login-50.png'
+                              className='h-4 w-4 filter brightness-0 invert opacity-70'
                               alt='Login'
                             />
                             <span>Login</span>
@@ -269,9 +259,9 @@ function Navbar () {
                             }}
                             className='flex items-center gap-3 w-full px-4 py-3 text-left text-gray-300 hover:text-white hover:bg-gray-800 transition-colors border-t border-gray-800'
                           >
-                            <img 
-                              src='/icons/icons8-registration-50.png' 
-                              className='h-4 w-4 filter brightness-0 invert opacity-70' 
+                            <img
+                              src='/icons/icons8-registration-50.png'
+                              className='h-4 w-4 filter brightness-0 invert opacity-70'
                               alt='Register'
                             />
                             <span>Register</span>
@@ -290,27 +280,41 @@ function Navbar () {
                 aria-label='Toggle menu'
               >
                 <div className='flex flex-col gap-1.5'>
-                  <span className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
-                    mobileMenuOpen ? 'rotate-45 translate-y-2' : ''
-                  }`}></span>
-                  <span className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
-                    mobileMenuOpen ? 'opacity-0' : ''
-                  }`}></span>
-                  <span className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
-                    mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''
-                  }`}></span>
+                  <span
+                    className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
+                      mobileMenuOpen ? 'rotate-45 translate-y-2' : ''
+                    }`}
+                  ></span>
+                  <span
+                    className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
+                      mobileMenuOpen ? 'opacity-0' : ''
+                    }`}
+                  ></span>
+                  <span
+                    className={`block h-0.5 w-6 bg-white transition-all duration-300 ${
+                      mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''
+                    }`}
+                  ></span>
                 </div>
               </button>
             </div>
           </div>
 
           {/* MOBILE MENU */}
-          <div className={`lg:hidden overflow-hidden transition-all duration-300 ${
-            mobileMenuOpen ? 'max-h-96 mt-4' : 'max-h-0'
-          }`}>
+          <div
+            className={`lg:hidden overflow-hidden transition-all duration-300 ${
+              mobileMenuOpen ? 'max-h-96 mt-4' : 'max-h-0'
+            }`}
+          >
             <div className='bg-gray-900 rounded-xl p-4 border border-gray-800'>
               <div className='grid grid-cols-2 gap-3'>
-                {['Football', 'Cricket', 'Volleyball', 'Gym', 'New Arrivals'].map(link => (
+                {[
+                  'Football',
+                  'Cricket',
+                  'Volleyball',
+                  'Gym',
+                  'New Arrivals'
+                ].map(link => (
                   <Link
                     key={link}
                     to={`/${link.toLowerCase().replace(' ', '-')}`}
@@ -336,7 +340,9 @@ function Navbar () {
                         </span>
                       </div>
                       <div>
-                        <p className='font-semibold text-white'>{user.name || 'User'}</p>
+                        <p className='font-semibold text-white'>
+                          {user.name || 'User'}
+                        </p>
                         <p className='text-xs text-gray-400'>View Profile</p>
                       </div>
                     </div>
@@ -348,11 +354,7 @@ function Navbar () {
                       }}
                       className='px-4 py-2 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition-colors flex items-center gap-2'
                     >
-                      <img 
-                        src='/icons/icons8-logout-50.png' 
-                        className='h-4 w-4 filter brightness-0 invert' 
-                        alt='Logout'
-                      />
+                      <FiLogOut className='h-4 w-4 text-white opacity-80' />
                       Logout
                     </button>
                   </div>
@@ -365,7 +367,7 @@ function Navbar () {
 
       {/* SEARCH OVERLAY - ENHANCED */}
       {isSearchOpen && (
-        <div 
+        <div
           className='fixed inset-0 z-3000 bg-black/90 backdrop-blur-lg animate-fadeIn'
           ref={searchRef}
         >
@@ -397,10 +399,12 @@ function Navbar () {
                 <div className='mt-6 bg-gray-900/90 backdrop-blur-sm rounded-2xl border border-gray-800 shadow-2xl overflow-hidden animate-slideDown'>
                   <div className='p-4 border-b border-gray-800'>
                     <h3 className='text-white font-semibold'>
-                      Search Results {filteredProducts.length > 0 && `(${filteredProducts.length})`}
+                      Search Results{' '}
+                      {filteredProducts.length > 0 &&
+                        `(${filteredProducts.length})`}
                     </h3>
                   </div>
-                  
+
                   <div className='max-h-96 overflow-y-auto'>
                     {filteredProducts.length > 0 ? (
                       filteredProducts.map(p => (
@@ -414,9 +418,9 @@ function Navbar () {
                           className='flex items-center gap-4 p-4 hover:bg-gray-800/50 cursor-pointer transition-colors group border-b border-gray-800 last:border-0'
                         >
                           <div className='h-12 w-12 rounded-lg bg-linear-to-br from-gray-800 to-gray-900 flex items-center justify-center group-hover:scale-105 transition-transform'>
-                            <img 
+                            <img
                               src={p.image}
-                              className='h-12 w-12 object-contain' 
+                              className='h-12 w-12 object-contain'
                               alt='Product'
                             />
                           </div>
@@ -428,22 +432,19 @@ function Navbar () {
                               {p.category || 'Sports Equipment'}
                             </p>
                           </div>
-                          <div className='text-green-500 font-semibold'>
-                            ${p.price || '99.99'}
-                          </div>
                         </div>
                       ))
                     ) : (
                       <div className='p-8 text-center'>
                         <div className='h-16 w-16 mx-auto rounded-full bg-gray-800 flex items-center justify-center mb-4'>
-                          <img 
-                            src='/icons/icons8-search-50.png' 
-                            className='h-8 w-8 filter brightness-0 invert opacity-50' 
-                            alt='No results'
-                          />
+                          <FiSearch className='h-5 w-5 text-white opacity-80 group-hover:opacity-100' />
                         </div>
-                        <p className='text-gray-400'>No products found for "{searchInput}"</p>
-                        <p className='text-sm text-gray-500 mt-2'>Try different keywords</p>
+                        <p className='text-gray-400'>
+                          No products found for "{searchInput}"
+                        </p>
+                        <p className='text-sm text-gray-500 mt-2'>
+                          Try different keywords
+                        </p>
                       </div>
                     )}
                   </div>
@@ -454,7 +455,12 @@ function Navbar () {
               <div className='mt-6'>
                 <p className='text-gray-400 text-sm mb-3'>Popular Categories</p>
                 <div className='flex flex-wrap gap-2'>
-                  {['Football Shoes', 'Cricket Bats', 'Gym Equipment', 'Volleyballs'].map(cat => (
+                  {[
+                    'Football Shoes',
+                    'Cricket Bats',
+                    'Gym Equipment',
+                    'Volleyballs'
+                  ].map(cat => (
                     <button
                       key={cat}
                       onClick={() => setSearchInput(cat)}
@@ -473,12 +479,22 @@ function Navbar () {
       {/* Add these styles for animations */}
       <style jsx>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
         @keyframes slideDown {
-          from { transform: translateY(-20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
+          from {
+            transform: translateY(-20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
         .animate-fadeIn {
           animation: fadeIn 0.2s ease-out;
